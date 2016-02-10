@@ -1,27 +1,16 @@
-Temp/*
-Library/*
-Build/*
+SpelSylt/Temp/*
+SpelSylt/Library/*
+SpelSylt/Build/*
 #Un-ignore these specific files
-!Library/*.asset
-!Library/AssetImportState
-!Library/AssetVersioning.db
-!Library/BuildPlayer.prefs
-!Library/ScriptMapper
-!Library/assetservercachev3
-!Library/expandedItems
-!Library/guidmapper
-!Library/unity default resources
-!Library/unity editor resources
-!Library/metadata/
-SpelSylt/Library/CurrentLayout.dwlt
-SpelSylt/Library/LastSceneManagerSetup.txt
-SpelSylt/Library/ProjectSettings.asset
-SpelSylt/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll.mdb
-SpelSylt/Library/ScriptAssemblies/Assembly-CSharp-firstpass.dll.mdb
-SpelSylt/Library/assetDatabase3
-SpelSylt/Library/expandedItems
-SpelSylt/Library/metadata/00/00000000000000004000000000000000
-SpelSylt/Library/metadata/00/00000000000000006100000000000000
-SpelSylt/ProjectSettings/ProjectSettings.asset
-SpelSylt/Temp/UnityLockfile
-SpelSylt/Temp/__Backupscenes/0.backup
+!SpelSylt/Library/*.asset
+!SpelSylt/Library/AssetImportState
+!SpelSylt/Library/AssetVersioning.db
+!SpelSylt/Library/BuildPlayer.prefs
+!SpelSylt/Library/ScriptMapper
+!SpelSylt/Library/assetservercachev3
+!SpelSylt/Library/expandedItems
+!SpelSylt/Library/guidmapper
+!SpelSylt/Library/unity default resources
+!SpelSylt/Library/unity editor resources
+!SpelSylt/Library/metadata/
+

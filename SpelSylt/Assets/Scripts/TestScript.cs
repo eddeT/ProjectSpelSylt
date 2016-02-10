@@ -5,6 +5,8 @@ public class TestScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        GameObject g = GameObject.FindGameObjectWithTag("Player");
+        Instantiate(g);
 	
 	}
 	

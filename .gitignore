@@ -26,10 +26,10 @@ ExportedObj/
 obj/
 *.svd
 *.userprefs
-/*.csproj
+SpelSylt/*.csproj
 *.pidb
 *.suo
-/*.sln
+SpelSylt/*.sln
 *.user
 *.unityproj
 *.booproj

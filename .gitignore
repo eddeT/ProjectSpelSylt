@@ -1,3 +1,7 @@
+# =============== #
+# Unity generated #
+# =============== #
+
 SpelSylt/Temp/*
 SpelSylt/Library/*
 SpelSylt/Build/*
@@ -13,4 +17,31 @@ SpelSylt/Build/*
 !SpelSylt/Library/unity default resources
 !SpelSylt/Library/unity editor resources
 !SpelSylt/Library/metadata/
+
+
+# ===================================== #
+# Visual Studio / MonoDevelop generated #
+# ===================================== #
+ExportedObj/
+obj/
+*.svd
+*.userprefs
+/*.csproj
+*.pidb
+*.suo
+/*.sln
+*.user
+*.unityproj
+*.booproj
+
+# ============ #
+# OS generated #
+# ============ #
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 

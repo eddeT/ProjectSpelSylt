@@ -1,5 +1,4 @@
-using UnityEngine;
-using UnityStandardAssets.CrossPlatformInput;
+   using UnityEngine;
 
 namespace UnityStandardAssets._2D
 {
@@ -21,7 +20,11 @@ namespace UnityStandardAssets._2D
             if (!m_Jump)
             {
                 // Read the jump input in Update so button presses aren't missed.
-                m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
+				if (Input.GetKey (KeyCode.Space)) 
+				{
+					m_Jump = true;
+				}
+               
             }
         }
 
@@ -30,7 +33,15 @@ namespace UnityStandardAssets._2D
         {
             // Read the inputs.
             bool crouch = Input.GetKey(KeyCode.LeftControl);
-            float h = CrossPlatformInputManager.GetAxis("Horizontal");
+            float h = 1;
+            if (Input.GetKey(KeyCode.A))
+            {
+                m_Jump = true;
+            }
+            if (Input.GetKey(KeyCode.D))
+            {
+                m_Jump = true;
+            }
             // Pass all parameters to the character control script.
             m_Character.Move(h, crouch, m_Jump);
             m_Jump = false;

@@ -18,7 +18,7 @@ public class ProjectileScript : MonoBehaviour
 
     void Start()
     {
-//transform.position = GameObject.FindGameObjectWithTag("Player").transform.position;
+        transform.position = GameObject.FindGameObjectWithTag("Player").transform.position;
         fSpeed = 1.0f;
         fDir = 1.0f;
         dDirection = (Direction)Random.Range(0,7);

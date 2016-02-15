@@ -12,6 +12,8 @@ public class ProjectileManager : MonoBehaviour
 
     }
 
+
+
     // Update is called once per frame
     void Update()
     {
@@ -24,4 +26,7 @@ public class ProjectileManager : MonoBehaviour
         }
            
     }
+
+
+
 }

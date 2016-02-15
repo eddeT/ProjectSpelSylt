@@ -20,6 +20,35 @@ namespace UnityStandardAssets._2D
         private Rigidbody2D m_Rigidbody2D;
         private bool m_FacingRight = true;  // For determining which way the player is currently facing.
 
+        float acceleration = 4f;
+        float maxSpeed = 150f;
+        float gravity = 0.2f;
+        float maxFall = 2f;
+        float jump = 200f;
+
+        LayerMask mask;
+
+        Rect box;
+
+        Vector2 velocity;
+
+        bool grounded = false;
+        bool falling = false;
+
+        int horizontalRays = 6;
+        int verticalRays = 4;
+        float margin = 1;
+        float boundsMargin = 2f;
+
+        Collider2D collider2DValue;
+
+        void Start()
+        {
+            mask = LayerMask.NameToLayer("NormalCollisions");
+
+            velocity = new Vector2(0, 0);
+        }
+        
         private void Awake()
         {
             // Setting up references.
@@ -27,25 +56,95 @@ namespace UnityStandardAssets._2D
             m_CeilingCheck = transform.Find("CeilingCheck");
             m_Anim = GetComponent<Animator>();
             m_Rigidbody2D = GetComponent<Rigidbody2D>();
+
+            collider2DValue = GetComponent<Collider2D>();
         }
 
+        void OnDrawGizmos()
+        {
+            if (enabled)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireCube(box.center, box.size);
+            }
+        }
 
         private void FixedUpdate()
         {
-            m_Grounded = false;
-
-            // The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
-            // This can be done using layers instead but Sample Assets will not overwrite your project settings.
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(m_GroundCheck.position, k_GroundedRadius, m_WhatIsGround);
-            for (int i = 0; i < colliders.Length; i++)
-            {
-                if (colliders[i].gameObject != gameObject)
-                    m_Grounded = true;
-            }
-            m_Anim.SetBool("Ground", m_Grounded);
-
             // Set the vertical animation
             m_Anim.SetFloat("vSpeed", m_Rigidbody2D.velocity.y);
+
+            box = new Rect(
+                collider2DValue.bounds.min.x,
+                collider2DValue.bounds.min.y,
+                collider2DValue.bounds.size.x,
+                collider2DValue.bounds.size.y);
+            
+            if (!grounded)
+            {
+                velocity = new Vector2(velocity.x, Mathf.Max(velocity.y - gravity, -maxFall));
+            }
+
+            if (velocity.y < 0)
+            {
+                falling = true;
+            }
+
+            if (grounded || falling)
+            {
+                Vector2 startPoint = new Vector2(box.xMin, box.center.y);
+                Vector2 endPoint = new Vector2(box.xMax, box.center.y);
+                
+                print("distance should be " + (box.height / 2 + (grounded ? margin : Mathf.Abs(velocity.y * Time.deltaTime))));
+
+                float distance = (box.height / 2 + (grounded ? margin : Mathf.Abs(velocity.y * Time.deltaTime)));
+
+                print("distance is " + distance);
+
+                bool connected = false;
+
+                Debug.DrawLine(startPoint, endPoint, Color.green);
+
+                for (int i = 0; i < verticalRays; i++)
+                {
+                    float lerpAmount = (float)i / (float)(verticalRays - 1);
+                    Vector2 origin = Vector2.Lerp(startPoint, endPoint, lerpAmount);
+                    Ray2D ray = new Ray2D(origin, Vector2.down);
+
+                    RaycastHit2D hitInfo = Physics2D.Raycast(origin, Vector2.down, distance);
+
+                    Debug.DrawLine(origin, new Vector2(origin.x, origin.y - distance), Color.blue, 1f);
+
+                    if (hitInfo.collider != null)
+                    {
+                        print("name of target = " + hitInfo.collider.name);
+
+                        print("box height = " + box.height.ToString());
+
+                        float hitDistance = Vector2.Distance(origin, hitInfo.point);
+
+                        print("hitDistance = " + hitDistance);
+
+                        connected = true;
+                        grounded = true;
+                        m_Grounded = true;
+                        falling = false;
+                        transform.Translate(Vector2.down * (hitDistance - (box.height / 2)));
+                        velocity = new Vector2(velocity.x, 0);
+                        break;
+                    }
+                }
+
+                if (!connected)
+                {
+                    grounded = false;
+                }
+            }
+        }
+
+        private void LateUpdate()
+        {
+            transform.Translate(velocity * Time.deltaTime);
         }
 
 
@@ -102,7 +201,7 @@ namespace UnityStandardAssets._2D
 
         private void Flip()
         {
-            // Switch the way the player is labelled as facing.
+            // Switch the way the player is labeled as facing.
             m_FacingRight = !m_FacingRight;
 
             // Multiply the player's x local scale by -1.

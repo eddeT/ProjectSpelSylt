@@ -16,6 +16,11 @@ namespace UnityStandardAssets._2D
         private Vector3 m_CurrentVelocity;
         private Vector3 m_LookAheadPos;
 
+        private void Wakeup()
+        {
+            transform.position = target.position;
+        }
+
         // Use this for initialization
         private void Start()
         {

@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace UnityStandardAssets._2D
 {
@@ -306,6 +307,31 @@ namespace UnityStandardAssets._2D
             Vector3 theScale = transform.localScale;
             theScale.x *= -1;
             transform.localScale = theScale;
+        }
+
+
+
+        int Health = 6;
+        bool Dead = false;
+        void OnTriggerEnter2D(Collider2D other)
+        {
+            print("HELLO");
+            if (other.transform.tag == "Pink_Enemy")
+            {
+                UpdateHealth(-1);
+                Destroy(other.gameObject);
+            }
+
+        }
+
+        private void UpdateHealth(int HealthChange)
+        {
+            Health += HealthChange;
+            if(Health <= 0)
+            {
+                Dead = true;
+                SceneManager.LoadScene(0);
+            }
         }
     }
 }

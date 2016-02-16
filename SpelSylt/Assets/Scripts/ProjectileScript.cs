@@ -19,6 +19,12 @@ public class ProjectileScript : MonoBehaviour
     private Vector2 v2FireFront;
     private Vector2 v2FireBack;
 
+    private static float DIAGONAL_VELOCITY_DECAY_FACTOR = 0.66f;
+
+
+    private float fprojectileDuration = 2.0f;
+    private float fprojectileDurationTimer = 0.0f;
+
     public void SetProjectile(Direction pDirection, float pfVelocity, Vector2 pv2PlayerVelocity)
     {
         fOrigSpeed = pfVelocity;
@@ -46,15 +52,12 @@ public class ProjectileScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float fCalculateVel = 0;
+        float normalVelocity = 0;
         v2Movement = transform.position;
         fVelocity = fOrigSpeed;
-        if((int)dDirection > 3)
-        {
-            fVelocity *= 0.66f;
-        }
+
         //Calculate Normal velocity
-        fCalculateVel = (fVelocity * fDir ) * Time.deltaTime;
+        normalVelocity = (fVelocity * fDir);
 
         //Calculate Relative velocity and Decay
         var playerVelocityX = 0.0f;
@@ -64,18 +67,37 @@ public class ProjectileScript : MonoBehaviour
         {
             if (v2PlayerVelocity.x > 0)
             {
-                playerVelocityX = v2PlayerVelocity.x * Time.deltaTime;
+                playerVelocityX = v2PlayerVelocity.x;
 
                 v2PlayerVelocity.x -= fPlayerVelocityDecay;
+            }
+        }
+        else if (v2OrigPlayerVelocity.x < 0)
+        {
+            if (v2PlayerVelocity.x < 0)
+            {
+                playerVelocityX = v2PlayerVelocity.x;
+
+                v2PlayerVelocity.x += fPlayerVelocityDecay;
             }
         }
         if (v2OrigPlayerVelocity.y > 0)
         {
             if (v2PlayerVelocity.y > 0)
             {
-                playerVelocityY = v2PlayerVelocity.y * Time.deltaTime;
+                playerVelocityY = v2PlayerVelocity.y;
 
                 v2PlayerVelocity.y -= fPlayerVelocityDecay;
+            }
+
+        }
+        if (v2OrigPlayerVelocity.y < 0)
+        {
+            if (v2PlayerVelocity.y < 0)
+            {
+                playerVelocityY = v2PlayerVelocity.y;
+
+                v2PlayerVelocity.y += fPlayerVelocityDecay;
             }
 
         }
@@ -87,45 +109,56 @@ public class ProjectileScript : MonoBehaviour
         {
             playerVelocityY = 0.0f;
         }
+        if (dDirection == Direction.Down && v2PlayerVelocity.y > 0)
+        {
+            playerVelocityY = 0.0f;
+        }
+
+        //If direction is diagonal
+        if ((int)dDirection > 3)
+        {
+
+            normalVelocity *= DIAGONAL_VELOCITY_DECAY_FACTOR;
+            playerVelocityX *= DIAGONAL_VELOCITY_DECAY_FACTOR;
+            playerVelocityY *= DIAGONAL_VELOCITY_DECAY_FACTOR;
+        }
 
 
-
+        normalVelocity *= Time.deltaTime;
+        playerVelocityX *= Time.deltaTime;
+        playerVelocityY *= Time.deltaTime;
 
         if (dDirection == Direction.Up || dDirection == Direction.UpLeft || dDirection == Direction.UpRight)
         {
-            v2Movement.y += (fCalculateVel + playerVelocityY);
+            v2Movement.y += (normalVelocity + playerVelocityY);
         }
         if (dDirection == Direction.Down || dDirection == Direction.DownLeft || dDirection == Direction.DownRight)
         {
-            v2Movement.y += -(fCalculateVel -(playerVelocityY));
+            v2Movement.y += -(normalVelocity - (playerVelocityY));
         }
         if (dDirection == Direction.Right || dDirection == Direction.UpRight || dDirection == Direction.DownRight)
         {
-            v2Movement.x += (fCalculateVel + playerVelocityX);
+            v2Movement.x += (normalVelocity + playerVelocityX);
         }
         if (dDirection == Direction.Left || dDirection == Direction.UpLeft || dDirection == Direction.DownLeft)
         {
-            v2Movement.x += -(fCalculateVel -(playerVelocityX));
+            v2Movement.x += -(normalVelocity - (playerVelocityX));
         }
-        
-        
+
+
         transform.position = v2Movement;
 
-        
 
-        }
-
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawSphere(transform.position, 1);
+        UpdateProjectileTimer();
     }
+
+
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.transform.tag != "Player" && other.transform.tag != "Projectile")
+        if (other.transform.tag != "Player" && other.transform.tag != "Projectile")
         {
-            if (other.transform.tag == "Enemy")
+            if (other.transform.tag == "Pink_Enemy")
             {
                 Destroy(other.gameObject);
             }
@@ -133,5 +166,15 @@ public class ProjectileScript : MonoBehaviour
             Destroy(gameObject);
         }
 
+    }
+
+
+    void UpdateProjectileTimer()
+    {
+        fprojectileDurationTimer += Time.deltaTime;
+        if (fprojectileDurationTimer >= fprojectileDuration)
+        {
+            Destroy(gameObject);
+        }
     }
 }

@@ -20,11 +20,10 @@ namespace UnityStandardAssets._2D
         private Rigidbody2D m_Rigidbody2D;
         private bool m_FacingRight = true;  // For determining which way the player is currently facing.
 
-        float acceleration = 4f;
-        float maxSpeed = 150f;
-        float gravity = 0.2f;
-        float maxFall = 2f;
-        float jump = 200f;
+        float acceleration = 2f;
+        float maxSpeed = 8f;
+        float gravity = 1.5f;
+        float maxFall = 20f;
 
         LayerMask mask;
 
@@ -37,8 +36,15 @@ namespace UnityStandardAssets._2D
 
         int horizontalRays = 6;
         int verticalRays = 4;
-        float margin = 1;
-        float boundsMargin = 2f;
+        float margin = 0.1f;
+
+        bool lastInput = false;
+        
+        float jumpPressedTime;
+        float jumpPressLeeway = 0.1f;
+        float impulse = 20f;
+
+        float angleLeeway = 20f;
 
         Collider2D collider2DValue;
 
@@ -74,6 +80,8 @@ namespace UnityStandardAssets._2D
             // Set the vertical animation
             m_Anim.SetFloat("vSpeed", m_Rigidbody2D.velocity.y);
 
+            // Gravity
+
             box = new Rect(
                 collider2DValue.bounds.min.x,
                 collider2DValue.bounds.min.y,
@@ -94,52 +102,142 @@ namespace UnityStandardAssets._2D
             {
                 Vector2 startPoint = new Vector2(box.xMin, box.center.y);
                 Vector2 endPoint = new Vector2(box.xMax, box.center.y);
-                
-                print("distance should be " + (box.height / 2 + (grounded ? margin : Mathf.Abs(velocity.y * Time.deltaTime))));
+
+                RaycastHit2D[] hitInfos = new RaycastHit2D[verticalRays];
 
                 float distance = (box.height / 2 + (grounded ? margin : Mathf.Abs(velocity.y * Time.deltaTime)));
 
-                print("distance is " + distance);
+                float smallestFraction = Mathf.Infinity;
+                int indexUsed = 0;
 
                 bool connected = false;
 
                 Debug.DrawLine(startPoint, endPoint, Color.green);
-
+                
                 for (int i = 0; i < verticalRays; i++)
                 {
                     float lerpAmount = (float)i / (float)(verticalRays - 1);
                     Vector2 origin = Vector2.Lerp(startPoint, endPoint, lerpAmount);
-                    Ray2D ray = new Ray2D(origin, Vector2.down);
 
-                    RaycastHit2D hitInfo = Physics2D.Raycast(origin, Vector2.down, distance);
+                    hitInfos[i] = Physics2D.Raycast(origin, Vector2.down, distance);
 
-                    Debug.DrawLine(origin, new Vector2(origin.x, origin.y - distance), Color.blue, 1f);
+                    Debug.DrawLine(origin, new Vector2(origin.x, origin.y - distance), Color.black, 1f);
 
-                    if (hitInfo.collider != null)
+                    if (hitInfos[i].fraction > 0)
                     {
-                        print("name of target = " + hitInfo.collider.name);
-
-                        print("box height = " + box.height.ToString());
-
-                        float hitDistance = Vector2.Distance(origin, hitInfo.point);
-
-                        print("hitDistance = " + hitDistance);
-
                         connected = true;
-                        grounded = true;
-                        m_Grounded = true;
-                        falling = false;
-                        transform.Translate(Vector2.down * (hitDistance - (box.height / 2)));
-                        velocity = new Vector2(velocity.x, 0);
-                        break;
+
+                        if (hitInfos[i].fraction < smallestFraction)
+                        {
+                            indexUsed = i;
+                            smallestFraction = hitInfos[i].fraction;
+                        }
                     }
                 }
 
-                if (!connected)
+                if (connected)
+                {
+                    m_Anim.SetBool("Ground", true);
+                    grounded = true;
+                    m_Grounded = true;
+                    falling = false;
+                    transform.Translate(Vector3.down * (hitInfos[indexUsed].fraction * distance - box.height / 2));
+                    velocity = new Vector2(velocity.x, 0);
+                }
+                else
                 {
                     grounded = false;
                 }
             }
+
+            // Movement
+
+            float horizontalAxis = Input.GetAxisRaw("Horizontal");
+
+            float newVelocityX = velocity.x;
+
+            if (horizontalAxis != 0)
+            {
+                newVelocityX += acceleration * horizontalAxis;
+                newVelocityX = Mathf.Clamp(newVelocityX, -maxSpeed, maxSpeed);
+            }
+            else if (velocity.x != 0)
+            {
+                int modifier = velocity.x > 0 ? -1 : 1;
+                newVelocityX += acceleration * modifier;
+            }
+
+            velocity = new Vector2(newVelocityX, velocity.y);
+
+            if (velocity.x != 0)
+            {
+                Vector2 startPoint = new Vector2(box.center.x, box.yMin + margin);
+                Vector2 endPoint = new Vector2(box.center.x, box.yMax - margin);
+
+                RaycastHit2D[] hitInfos = new RaycastHit2D[horizontalRays];
+                int amountConnected = 0;
+                float lastFraction = 0;
+
+                float sideRayLength = box.width / 2 + Mathf.Abs(newVelocityX * Time.deltaTime);
+                Vector2 direction = newVelocityX > 0 ? Vector2.right : Vector2.left;
+                bool connected = false;
+
+                Debug.DrawLine(startPoint, endPoint, Color.green);
+
+                for (int i = 0; i < horizontalRays; i++)
+                {
+                    float lerpAmount = (float)i / (float)(horizontalRays - 1);
+                    Vector2 origin = Vector2.Lerp(startPoint, endPoint, lerpAmount);
+
+                    Debug.DrawLine(origin, new Vector2(origin.x + (sideRayLength * horizontalAxis), origin.y), Color.yellow, 1f);
+
+                    hitInfos[i] = Physics2D.Raycast(origin, direction, sideRayLength);
+
+                    if (hitInfos[i].fraction > 0)
+                    {
+                        float hitDistance = Vector2.Distance(origin, hitInfos[i].point);
+
+                        connected = true;
+
+                        if (lastFraction > 0)
+                        {
+                            float angle = Vector2.Angle(hitInfos[i].point - hitInfos[i - 1].point, Vector2.right);
+
+                            if (Mathf.Abs(angle - 90) < angleLeeway)
+                            {
+
+                                transform.Translate(direction * (hitDistance - box.width / 2));
+                                velocity = new Vector2(0, velocity.y);
+                                break;
+                            }
+                        }
+                    }
+
+                    amountConnected++;
+                    lastFraction = hitInfos[i].fraction;
+                }
+            }
+
+            // Jumping
+
+            bool input = Input.GetButton("Jump");
+            if (input && !lastInput)
+            {
+                jumpPressedTime = Time.time;
+            }
+            else if (!input)
+            {
+                jumpPressedTime = 0;
+            }
+
+            if (grounded && Time.time - jumpPressedTime < jumpPressLeeway)
+            {
+                velocity = new Vector2(velocity.x, impulse);
+                jumpPressedTime = 0;
+                grounded = false;
+            }
+
+            lastInput = input;
         }
 
         private void LateUpdate()

@@ -172,8 +172,8 @@ namespace UnityStandardAssets._2D
 
             if (velocity.x != 0)
             {
-                Vector2 startPoint = new Vector2(box.center.x, box.yMin + margin);
-                Vector2 endPoint = new Vector2(box.center.x, box.yMax - margin);
+                Vector2 startPoint = new Vector2(box.center.x, box.yMin);
+                Vector2 endPoint = new Vector2(box.center.x, box.yMax);
 
                 RaycastHit2D[] hitInfos = new RaycastHit2D[horizontalRays];
                 int amountConnected = 0;

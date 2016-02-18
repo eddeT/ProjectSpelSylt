@@ -53,7 +53,7 @@ public class HealthUI : MonoBehaviour {
 
     void Start ()
     {
-	    
+        this.transform.localPosition = new Vector2(-4.17f, 4.52f);
 	}
 	
 	void Update ()

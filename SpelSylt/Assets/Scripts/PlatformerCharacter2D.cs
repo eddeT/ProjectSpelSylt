@@ -315,7 +315,6 @@ namespace UnityStandardAssets._2D
         bool Dead = false;
         void OnTriggerEnter2D(Collider2D other)
         {
-            print("HELLO");
             if (other.transform.tag == "Pink_Enemy")
             {
                 UpdateHealth(-1);

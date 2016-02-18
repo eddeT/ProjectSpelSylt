@@ -49,11 +49,21 @@ namespace UnityStandardAssets._2D
 
         Collider2D collider2DValue;
 
+        //Health
+        int Health = 6;
+
+        bool Dead = false;
+
+        HealthUI healthUIScript;
+
+
         void Start()
         {
             mask = LayerMask.NameToLayer("NormalCollisions");
 
             velocity = new Vector2(0, 0);
+
+            healthUIScript.StartHealthUI(Health);
         }
         
         private void Awake()
@@ -65,6 +75,8 @@ namespace UnityStandardAssets._2D
             m_Rigidbody2D = GetComponent<Rigidbody2D>();
 
             collider2DValue = GetComponent<Collider2D>();
+
+            healthUIScript = GameObject.Find("HealthUI").GetComponent<HealthUI>();
         }
 
         void OnDrawGizmos()
@@ -350,8 +362,7 @@ namespace UnityStandardAssets._2D
 
 
 
-        int Health = 6;
-        bool Dead = false;
+      
         void OnTriggerEnter2D(Collider2D other)
         {
             if (other.transform.tag == "Pink_Enemy")
@@ -364,7 +375,9 @@ namespace UnityStandardAssets._2D
 
         private void UpdateHealth(int HealthChange)
         {
+            healthUIScript.HealthUIUpdate(HealthChange);
             Health += HealthChange;
+            
             if(Health <= 0)
             {
                 Dead = true;

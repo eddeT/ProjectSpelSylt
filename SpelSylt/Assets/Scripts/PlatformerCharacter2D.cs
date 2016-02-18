@@ -45,7 +45,7 @@ namespace UnityStandardAssets._2D
         float jumpPressLeeway = 0.1f;
         float impulse = 20f;
 
-        float angleLeeway = 20f;
+        float angleLeeway = 10f;
 
         Collider2D collider2DValue;
 
@@ -151,6 +151,43 @@ namespace UnityStandardAssets._2D
                 }
             }
 
+            // Ceiling Check
+
+            bool canJump = true;
+
+            if (grounded || velocity.y > 0)
+            {
+                float upRayLength = grounded ? margin : velocity.y * Time.deltaTime;
+
+                bool connection = false;
+                int lastConnection = 0;
+
+                Vector2 min = new Vector2(box.xMin, box.center.y);
+                Vector2 max = new Vector2(box.xMax, box.center.y);
+
+                RaycastHit2D[] upRays = new RaycastHit2D[verticalRays];
+
+                for (int i = 0; i < verticalRays; i++)
+                {
+                    Vector2 start = Vector2.Lerp(min, max, (float)i / (float)verticalRays);
+                    Vector2 end = start + Vector2.up * (upRayLength + box.height / 2);
+
+                    upRays[i] = Physics2D.Linecast(start, end);
+
+                    if (upRays[i].fraction > 0)
+                    {
+                        connection = true;
+                        lastConnection = i;
+                    }
+                }
+
+                if (connection)
+                {
+                    velocity = new Vector2(velocity.x, 0);
+                    transform.position += Vector3.up * (upRays[lastConnection].point.y - box.yMax);
+                }
+            }
+
             // Movement
 
             float horizontalAxis = Input.GetAxisRaw("Horizontal");
@@ -198,6 +235,8 @@ namespace UnityStandardAssets._2D
                     {
                         float hitDistance = Vector2.Distance(origin, hitInfos[i].point);
 
+                        hitDistance -= 0.01f;
+                        
                         connected = true;
 
                         if (lastFraction > 0)
@@ -206,7 +245,7 @@ namespace UnityStandardAssets._2D
 
                             if (Mathf.Abs(angle - 90) < angleLeeway)
                             {
-
+                                print("angle - 90 = " + (angle - 90));
                                 transform.Translate(direction * (hitDistance - box.width / 2));
                                 velocity = new Vector2(0, velocity.y);
                                 break;

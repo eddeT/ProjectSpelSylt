@@ -50,9 +50,9 @@ public class HealthUI : MonoBehaviour {
     {
         
     }
-    float uiFactor = 50f;
-    float uiOffsetY = 32f / 100f;//32 pixlar 
-    float uiOffsetX = 32f / 100f;
+    //float uiFactor = 50f;
+    //float uiOffsetY = 32f / 100f;//32 pixlar 
+    //float uiOffsetX = 32f / 100f;
     void Start ()
     {
         this.transform.localPosition = new Vector2(0f, 0f);

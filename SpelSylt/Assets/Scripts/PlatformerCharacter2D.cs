@@ -2,8 +2,6 @@ using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace UnityStandardAssets._2D
-{
     public class PlatformerCharacter2D : MonoBehaviour
     {
         [SerializeField] private float m_MaxSpeed = 10f;                    // The fastest the player can travel in the x axis.
@@ -48,7 +46,7 @@ namespace UnityStandardAssets._2D
         float angleLeeway = 10f;
 
         Collider2D collider2DValue;
-
+        bool flip = false;
         //Health
         int Health = 6;
 
@@ -359,13 +357,16 @@ namespace UnityStandardAssets._2D
         {
             // Switch the way the player is labeled as facing.
             m_FacingRight = !m_FacingRight;
-
+            flip = !flip;
             // Multiply the player's x local scale by -1.
             Vector3 theScale = transform.localScale;
             theScale.x *= -1;
             transform.localScale = theScale;
         }
-
+        public bool GetFlip()
+    {
+        return flip;
+    }
 
 
       
@@ -390,5 +391,5 @@ namespace UnityStandardAssets._2D
                 SceneManager.LoadScene(0);
             }
         }
-    }
+    
 }

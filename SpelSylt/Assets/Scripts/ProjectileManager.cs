@@ -9,10 +9,16 @@ public class ProjectileManager : MonoBehaviour
 
     float shootCooldown = 0.4f;
     float shootTimer = 0.0f;
-    
-    void Awake()
+    Transform v2FireFront;
+    Transform v2FireBack;
+    PlatformerCharacter2D CharScript;
+        
+void Awake()
     {
         PlayerBody = GameObject.FindGameObjectWithTag("Player").GetComponent<Rigidbody2D>();
+        CharScript = GameObject.FindGameObjectWithTag("Player").GetComponent<PlatformerCharacter2D>();
+        v2FireFront = GameObject.Find("ProjectileFireFront").transform;
+        v2FireBack = GameObject.Find("ProjectileFireBack").transform;
     }
 
 
@@ -56,8 +62,23 @@ public class ProjectileManager : MonoBehaviour
         GameObject newProjectile = GameObject.Instantiate(ProjectileSimple);
         ProjectileScript ProScript = newProjectile.GetComponent<ProjectileScript>();
         ProScript.SetProjectile((Direction)pDir, 4.5f, PlayerBody.velocity);
+        newProjectile.transform.position = v2FireFront.position;
 
-
+        if(CharScript.GetFlip() == false)
+        {
+            if (pDir == (int)Direction.Left || pDir == (int)Direction.DownLeft || pDir == (int)Direction.UpLeft)
+            {
+                newProjectile.transform.position = v2FireBack.position;
+            }
+        }
+        else
+        {
+            if (pDir == (int)Direction.Right || pDir == (int)Direction.DownRight || pDir == (int)Direction.UpRight)
+            {
+                newProjectile.transform.position = v2FireBack.position;
+            }
+        }
+        
 
     }
 }

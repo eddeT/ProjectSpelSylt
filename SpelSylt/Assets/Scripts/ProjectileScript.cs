@@ -16,8 +16,7 @@ public class ProjectileScript : MonoBehaviour
 
     private Vector2 v2OrigPlayerVelocity;
 
-    private Vector2 v2FireFront;
-    private Vector2 v2FireBack;
+
 
     private static float DIAGONAL_VELOCITY_DECAY_FACTOR = 0.66f;
 
@@ -31,6 +30,7 @@ public class ProjectileScript : MonoBehaviour
         v2PlayerVelocity = pv2PlayerVelocity;
         v2OrigPlayerVelocity = v2PlayerVelocity;
         dDirection = pDirection;
+        
     }
     public void SetProjectile(Direction pDirection)
     {
@@ -39,9 +39,8 @@ public class ProjectileScript : MonoBehaviour
 
     void Awake()
     {
-        v2FireFront = GameObject.Find("ProjectileFireFront").transform.position;
-        v2FireBack = GameObject.Find("ProjectileFireBack").transform.position;
-        transform.position = v2FireFront;
+        
+        
     }
 
     void Start()

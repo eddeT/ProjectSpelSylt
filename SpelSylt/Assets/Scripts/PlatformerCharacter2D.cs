@@ -308,9 +308,9 @@ using UnityEngine.SceneManagement;
       
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (other.transform.tag == "Pink_Enemy")
+            if (other.transform.tag == "Enemy")
             {
-                UpdateHealth(-1);
+                UpdateHealth(-other.GetComponent<Pink_Enemy>().GetDamage());
                 Destroy(other.gameObject);
             }
 

@@ -17,11 +17,20 @@ public class ProjectileScript : MonoBehaviour
     private Vector2 v2OrigPlayerVelocity;
 
 
-
+    int iProjectileDamage = 1;
+    public int GetProjectileDamge()
+    {
+        bHit = true;
+        return iProjectileDamage;
+        
+    }
+    
     private static float DIAGONAL_VELOCITY_DECAY_FACTOR = 0.66f;
 
+    bool bHit = false;
+    bool bEnd = false;
 
-    private float fprojectileDuration = 2.0f;
+    private float fprojectileDuration = 1.5f;
     private float fprojectileDurationTimer = 0.0f;
 
     public void SetProjectile(Direction pDirection, float pfVelocity, Vector2 pv2PlayerVelocity)
@@ -51,6 +60,14 @@ public class ProjectileScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(bEnd)
+        {
+            ProjectileEnd();
+        }
+        if(bHit)
+        {
+            ProjectileHit();
+        }
         float normalVelocity = 0;
         v2Movement = transform.position;
         fVelocity = fOrigSpeed;
@@ -153,25 +170,31 @@ public class ProjectileScript : MonoBehaviour
 
 
 
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.transform.tag != "Player" && other.transform.tag != "Projectile")
-        {
-            if (other.transform.tag == "Pink_Enemy")
-            {
-                Destroy(other.gameObject);
-            }
-
-            Destroy(gameObject);
-        }
-
-    }
+   
 
 
     void UpdateProjectileTimer()
     {
         fprojectileDurationTimer += Time.deltaTime;
         if (fprojectileDurationTimer >= fprojectileDuration)
+        {
+            bEnd = true;
+        }
+    }
+
+    void ProjectileEnd()
+    {
+        this.transform.localScale = Vector2.MoveTowards(transform.localScale, new Vector2(0, 0), 2f*Time.deltaTime);
+        if(transform.localScale.x <= .5f && transform.localScale.y <= .5f)
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    void ProjectileHit()
+    {
+        this.transform.localScale = Vector2.MoveTowards(transform.localScale, new Vector2(0, 0), 10f * Time.deltaTime);
+        if (transform.localScale.x <= .5f && transform.localScale.y <= .5f)
         {
             Destroy(gameObject);
         }

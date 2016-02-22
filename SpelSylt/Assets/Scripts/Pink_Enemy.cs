@@ -11,11 +11,18 @@ public class Pink_Enemy : MonoBehaviour
 
     private bool gameIsShuttingDown = false;
 
+    private int iHealth = 3;
+    private int iDamage = 1;
+    public int GetDamage()
+    {
+        return iDamage;
+    }
+
     //
     void Awake()
     {
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-        transform.tag = "Pink_Enemy";
+        transform.tag = "Enemy";
     }
 
 
@@ -40,7 +47,29 @@ public class Pink_Enemy : MonoBehaviour
     void OnApplicationQuit()
     {
         gameIsShuttingDown = true;
-        print(gameIsShuttingDown);
+        
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.transform.tag == "Projectile")
+        {
+            iHealth -= other.GetComponent<ProjectileScript>().GetProjectileDamge();
+            if(iHealth == 2)
+            {
+                GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.4f, 0.3f, 1f);
+            }
+            else if(iHealth == 1)
+            {
+                GetComponent<SpriteRenderer>().color = new Color(0.3f,0.2f,0.4f, 1f);
+            }
+            if(iHealth <= 0)
+            {
+                Destroy(gameObject);
+            }
+            
+        }
+
     }
 
     void OnDestroy()

@@ -7,11 +7,13 @@ public class ProjectileManager : MonoBehaviour
     public GameObject ProjectileSimple;
     public Rigidbody2D PlayerBody;
 
-    float shootCooldown = 0.4f;
-    float shootTimer = 0.0f;
+    float fShootCooldown = 0.4f;
+    float fShootTimer = 0.0f;
     Transform v2FireFront;
     Transform v2FireBack;
     PlatformerCharacter2D CharScript;
+
+    
         
 void Awake()
     {
@@ -44,7 +46,7 @@ void Awake()
 
     void FixedUpdate()
     {
-        shootTimer += Time.deltaTime;
+        fShootTimer += Time.deltaTime;
     }
 
     public void Shoot(int pDir)
@@ -53,11 +55,11 @@ void Awake()
         {
             return;
         }
-        if(shootTimer < shootCooldown)
+        if(fShootTimer < fShootCooldown)
         {
             return;
         }
-        shootTimer = 0.0f;
+        fShootTimer = 0.0f;
 
         GameObject newProjectile = GameObject.Instantiate(ProjectileSimple);
         ProjectileScript ProScript = newProjectile.GetComponent<ProjectileScript>();

@@ -1,19 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class AutoDestroyParicleSystem : MonoBehaviour
-{
-    ParticleSystem particleSystem;
+public class AutoDestroyParticles : MonoBehaviour {
+
+    new ParticleSystem particleSystem;
     // Use this for initialization
     void Awake()
     {
         particleSystem = GetComponent<ParticleSystem>();
     }
 
-    
+
     void FixedUpdate()
     {
-        if(particleSystem.isPlaying == true)
+        if (particleSystem.isPlaying == true)
         {
             return;
         }

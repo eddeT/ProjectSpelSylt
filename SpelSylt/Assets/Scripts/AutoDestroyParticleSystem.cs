@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class AutoDestroy : MonoBehaviour
+public class AutoDestroyParicleSystem : MonoBehaviour
 {
     ParticleSystem particleSystem;
     // Use this for initialization

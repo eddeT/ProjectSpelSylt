@@ -261,7 +261,6 @@ namespace UnityStandardAssets._2D
 
                             if (Mathf.Abs(angle - 90) < angleLeeway)
                             {
-                                print("angle - 90 = " + (angle - 90));
                                 transform.Translate(direction * (hitDistance - box.width / 2));
                                 velocity = new Vector2(0, velocity.y);
                                 break;

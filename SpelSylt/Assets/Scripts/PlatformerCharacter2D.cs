@@ -59,7 +59,8 @@ namespace UnityStandardAssets._2D
 
         void Start()
         {
-            mask = LayerMask.NameToLayer("NormalCollisions");
+            mask = 0;
+            mask |= (1 << LayerMask.NameToLayer("NormalCollisions"));
 
             velocity = new Vector2(0, 0);
 
@@ -136,7 +137,7 @@ namespace UnityStandardAssets._2D
                     float lerpAmount = (float)i / (float)(verticalRays - 1);
                     Vector2 origin = Vector2.Lerp(startPoint, endPoint, lerpAmount);
 
-                    hitInfos[i] = Physics2D.Raycast(origin, Vector2.down, distance);
+                    hitInfos[i] = Physics2D.Raycast(origin, Vector2.down, distance, mask);
 
                     Debug.DrawLine(origin, new Vector2(origin.x, origin.y - distance), Color.black, 1f);
 
@@ -188,7 +189,7 @@ namespace UnityStandardAssets._2D
                     Vector2 start = Vector2.Lerp(min, max, (float)i / (float)verticalRays);
                     Vector2 end = start + Vector2.up * (upRayLength + box.height / 2);
 
-                    upRays[i] = Physics2D.Linecast(start, end);
+                    upRays[i] = Physics2D.Linecast(start, end, mask);
 
                     if (upRays[i].fraction > 0)
                     {
@@ -245,7 +246,7 @@ namespace UnityStandardAssets._2D
 
                     Debug.DrawLine(origin, new Vector2(origin.x + (sideRayLength * horizontalAxis), origin.y), Color.yellow, 1f);
 
-                    hitInfos[i] = Physics2D.Raycast(origin, direction, sideRayLength);
+                    hitInfos[i] = Physics2D.Raycast(origin, direction, sideRayLength, mask);
 
                     if (hitInfos[i].fraction > 0)
                     {

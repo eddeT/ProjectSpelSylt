@@ -50,11 +50,32 @@ public class HealthUI : MonoBehaviour {
     {
         
     }
-
+    float uiFactor = 50f;
+    float uiOffsetY = 32f / 100f;//32 pixlar 
+    float uiOffsetX = 32f / 100f;
     void Start ()
     {
-        this.transform.localPosition = new Vector2(-4.17f, 4.52f);
-	}
+        this.transform.localPosition = new Vector2(0f, 0f);
+
+        float sWidth = Screen.width;
+        float sHeight = Screen.height;
+
+
+        float aspect = sWidth / sHeight;
+        var uiWidth = sWidth/100f;
+        var uiHeight = sHeight/100f;
+        print("Dela 100");
+        print(uiWidth);
+        print(uiHeight);
+        print(sWidth / sHeight);
+
+        uiHeight /= 2.0f;
+        uiWidth /= 2.0f;
+
+        //this.transform.localPosition = new Vector2(-uiWidth + uiOffsetX, uiHeight - uiOffsetY);
+        this.transform.localPosition = new Vector2(-8.50f, 4.50f);
+
+    }
 	
 	void Update ()
     {

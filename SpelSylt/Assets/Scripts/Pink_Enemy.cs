@@ -9,6 +9,8 @@ public class Pink_Enemy : MonoBehaviour
     public GameObject particles;
     private Renderer rend;
 
+    private bool gameIsShuttingDown = false;
+
     //
     void Awake()
     {
@@ -35,17 +37,28 @@ public class Pink_Enemy : MonoBehaviour
 
     }
 
+    void OnApplicationQuit()
+    {
+        gameIsShuttingDown = true;
+        print(gameIsShuttingDown);
+    }
+
     void OnDestroy()
     {
-        GameObject particleObject = Instantiate(particles);
-        ParticleSystem particleSystem = particleObject.GetComponent<ParticleSystem>();
+
+        if(gameObject && gameIsShuttingDown == false)
+        {
+            GameObject particleObject = Instantiate(particles);
+            ParticleSystem particleSystem = particleObject.GetComponent<ParticleSystem>();
 
 
 
-        particleObject.transform.position = this.transform.GetChild(0).transform.position;
-        Vector3 boxSize = GetComponent<BoxCollider2D>().size;
-        particleObject.SetActive(true);
-        particleSystem.Play();
+            particleObject.transform.position = this.transform.GetChild(0).transform.position;
+            Vector3 boxSize = GetComponent<BoxCollider2D>().size;
+            particleObject.SetActive(true);
+            particleSystem.Play();
+        }
+       
 
     }
 }

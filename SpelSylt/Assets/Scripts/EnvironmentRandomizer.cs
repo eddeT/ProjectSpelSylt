@@ -9,20 +9,28 @@ public class EnvironmentRandomizer : MonoBehaviour
     private const float xOffset = -8;
     private const float yOffset = -4;
 
-    private const float xSize = 0.5f;
-    private const float ySize = 0.5f;
+    private float xSize;
+    private float ySize;
 
     private const int xAmount = 40;
     private const int yAmount = 25;
 
     private BoxCollider2D totalCollider;
 
+    private SpriteRenderer renderer;
+    
 	// Use this for initialization
 	void Start ()
     {
+
         go = (GameObject)Resources.Load("SimpleCrate");
 
         tileList = new List<List<GameObject>>();
+
+        renderer = go.GetComponent<SpriteRenderer>();
+
+        xSize = renderer.bounds.size.x;
+        ySize = renderer.bounds.size.y;
 
         for (int i = 0; i < xAmount; i++)
         {
@@ -36,7 +44,7 @@ public class EnvironmentRandomizer : MonoBehaviour
                 }
                 tileList[i].Add((GameObject)Instantiate(go, new Vector3(i*xSize+xOffset, j*ySize+yOffset, 0), new Quaternion(0,0,0,0)));
             }
-        }        
+        }
 
         /*totalCollider = tileList[0][0].AddComponent<BoxCollider2D>();
 

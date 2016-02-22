@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 
     public class PlatformerCharacter2D : MonoBehaviour
     {
+        [Range(0, 1)] [SerializeField] private float m_CrouchSpeed = .36f;  // Amount of maxSpeed applied to crouching movement. 1 = 100%
         
         private Animator m_Anim;            // Reference to the player's animator component.
         private bool m_FacingRight = true;  // For determining which way the player is currently facing.
@@ -43,6 +44,8 @@ using UnityEngine.SceneManagement;
 
         HealthUI healthUIScript;
 
+        bool loaded = false;
+        
         void Start()
         {
             mask = 0;

@@ -21,9 +21,10 @@ public class PlatformerCharacter2D : MonoBehaviour
 
     bool grounded = false;
     bool falling = false;
-
+    
     int horizontalRays = 12;
     int verticalRays = 10;
+
     float margin = 0.1f;
 
     bool lastInput = false;
@@ -310,8 +311,9 @@ public class PlatformerCharacter2D : MonoBehaviour
     {
         if (other.transform.tag == "Enemy")
         {
-            UpdateHealth(-other.GetComponent<Pink_Enemy>().GetDamage());
-            Destroy(other.gameObject);
+            Enemy_Base enemyB = other.GetComponent<Enemy_Base>();
+            UpdateHealth(-enemyB.GetDamage());
+            enemyB.SetToBeDestroyed(true);
         }
 
     }
